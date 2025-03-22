@@ -1,3 +1,7 @@
+using BattleshipGame.Domain.Enums;
+
+namespace BattleshipGame.Domain.Models;
+
 public class Ship
 {
     public ShipType Type { get; }
@@ -10,14 +14,11 @@ public class Ship
         Positions = positions;
     }
 
-    public HitResult RegisterHit(Position shot)
+    public bool RegisterHit(Position pos)
     {
-        if (!Positions.Contains(shot))
-            return HitResult.Miss;
-
-        _hits.Add(shot);
-
-        return IsSunk ? HitResult.Sunk : HitResult.Hit;
+        if (!Positions.Contains(pos)) return false;
+        _hits.Add(pos);
+        return true;
     }
 
     public bool IsSunk => _hits.Count == Positions.Count;

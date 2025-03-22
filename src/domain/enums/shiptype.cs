@@ -1,3 +1,5 @@
+namespace BattleshipGame.Domain.Enums;
+
 public enum ShipType
 {
     Battleship = 5,

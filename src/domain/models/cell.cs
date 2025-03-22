@@ -1,3 +1,5 @@
+namespace BattleshipGame.Domain.Models;
+
 public class Cell
 {
     public Position Position { get; }

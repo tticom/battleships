@@ -1,26 +1,27 @@
+﻿using BattleshipGame.Application;
+
 var game = new GameService();
-Console.WriteLine("Welcome to Battleships!");
+
+Console.WriteLine("🎯 Battleships Game Started!");
 
 while (!game.IsGameOver())
 {
-    Console.Write("Enter target (e.g., A5): ");
-    string input = Console.ReadLine() ?? "";
+    Console.Write("Target (e.g., A5): ");
+    string? input = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(input))
+        continue;
 
     try
     {
-        var (result, ship) = game.Shoot(input);
-        Console.WriteLine(result switch
-        {
-            HitResult.Miss => "Miss!",
-            HitResult.Hit => "Hit!",
-            HitResult.Sunk => $"You sunk a {ship?.Type}!",
-            _ => "Error"
-        });
+        var (hit, ship, sunk) = game.Shoot(input);
+        if (!hit) Console.WriteLine("💦 Miss!");
+        else if (sunk) Console.WriteLine($"🔥 Sunk {ship!.Type}!");
+        else Console.WriteLine("💥 Hit!");
     }
-    catch
+    catch (Exception ex)
     {
-        Console.WriteLine("Invalid input. Try again.");
+        Console.WriteLine(ex.Message);
     }
 }
 
-Console.WriteLine("Congratulations, all ships sunk!");
+Console.WriteLine("🎉 All ships sunk! You won!");

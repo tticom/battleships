@@ -1,8 +1,9 @@
+namespace BattleshipGame.Domain.Models;
+
 public class Grid
 {
     public const int Size = 10;
     public Cell[,] Cells { get; } = new Cell[Size, Size];
-
     public List<Ship> Ships { get; } = new();
 
     public Grid()
@@ -14,7 +15,7 @@ public class Grid
 
     public bool AddShip(Ship ship)
     {
-        if (ship.Positions.Any(p => !IsValid(p) || Cells[p.Row, p.Column].Ship != null))
+        if (ship.Positions.Any(p => !ValidPosition(p) || Cells[p.Row, p.Column].Ship != null))
             return false;
 
         Ships.Add(ship);
@@ -24,20 +25,20 @@ public class Grid
         return true;
     }
 
-    public (HitResult result, Ship? ship) Shoot(Position pos)
+    public (bool isHit, Ship? ship, bool isSunk) Shoot(Position pos)
     {
-        if (!IsValid(pos))
-            throw new ArgumentException("Invalid Position.");
+        if (!ValidPosition(pos))
+            throw new ArgumentException("Invalid position");
 
         var cell = Cells[pos.Row, pos.Column];
         cell.IsHit = true;
 
-        if (cell.Ship == null)
-            return (HitResult.Miss, null);
+        if (cell.Ship == null) return (false, null, false);
 
-        var result = cell.Ship.RegisterHit(pos);
-        return (result, cell.Ship);
+        bool hit = cell.Ship.RegisterHit(pos);
+        return (hit, cell.Ship, cell.Ship.IsSunk);
     }
 
-    private bool IsValid(Position p) => p.Row >= 0 && p.Row < Size && p.Column >= 0 && p.Column < Size;
+    private bool ValidPosition(Position p) =>
+        p.Row >= 0 && p.Row < Size && p.Column >= 0 && p.Column < Size;
 }
